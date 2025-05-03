@@ -1,0 +1,11 @@
+[package]
+name = "dyson"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy =  { version = "0.16.0", features = [ "wayland" ] }
+rapier3d = { version = "*", features = [ "simd-stable" ] }
+
+[[bin]]
+name = "dyson"
