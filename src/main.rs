@@ -43,6 +43,7 @@
 //! | arrow down           | Increase FOV  |
 
 
+pub mod clicker;
 pub mod world_model;
 pub mod view_model;
 pub mod sensitivity;
@@ -53,10 +54,11 @@ pub mod movement;
 use world_model::spawn_world_model;
 use world_model::spawn_lights;
 use world_model::spawn_text;
-use view_model::spawn_view_model;
 use world_model::change_fov;
+use view_model::spawn_view_model;
 use movement::move_player;
 use movement::translate_player;
+use clicker::log_mouse_clicks;
 
 use bevy::prelude::*;
 
@@ -72,7 +74,7 @@ fn main() {
                 spawn_text,
             ),
         )
-        .add_systems(Update, (move_player, translate_player, change_fov))
+        .add_systems(Update, (move_player, translate_player, change_fov, log_mouse_clicks))
         .run();
 }
 
