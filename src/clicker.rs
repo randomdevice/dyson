@@ -11,21 +11,25 @@ pub fn log_mouse_clicks(
     player: Single<&Transform, With<Player>>
 ) {
     let transform = player.into_inner();
-    let (yaw, _, _) = transform.rotation.to_euler(EulerRot::YXZ);
+    let (yaw, pitch, roll) = transform.rotation.to_euler(EulerRot::YXZ);
 
     if input.just_pressed(MouseButton::Left) {
-        info!("Player [ x: {}, y: {}, z: {} ]", transform.translation.x, transform.translation.y, transform.translation.z);
-        info!("Object [ x: {}, y: {}, z: {} ]", transform.translation.x + yaw.cos(), transform.translation.y, transform.translation.z - yaw.sin());
         let forward_distance = 2.0;
         let sphere = meshes.add(Sphere::new(0.3));
         let material = materials.add(Color::WHITE);
+
+        let x_translation = transform.translation.x - yaw.sin() * forward_distance;
+        let y_translation = transform.translation.y + pitch.sin() * pitch.cos() * forward_distance; 
+        let z_translation = transform.translation.z - yaw.cos() * forward_distance;
+        //info!("Object [ x: {}, y: {}, z: {} ]", x_translation, y_translation , z_translation);
+
         commands.spawn((
                 Mesh3d(sphere.clone()),
                 MeshMaterial3d(material.clone()),
                 Transform::from_xyz(
-                    transform.translation.x - yaw.sin() * forward_distance, 
-                    transform.translation.y, 
-                    transform.translation.z - yaw.cos() * forward_distance),
+                    x_translation, 
+                    y_translation, 
+                    z_translation),
         ));
     }
 
