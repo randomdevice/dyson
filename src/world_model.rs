@@ -2,6 +2,7 @@ use bevy::{
     color::palettes::tailwind,
     prelude::*, render::view::RenderLayers,
 };
+use bevy_rapier3d::prelude::*;
 use crate::render_layer::{DEFAULT_RENDER_LAYER, VIEW_MODEL_RENDER_LAYER};
 
 #[derive(Debug, Component)]
@@ -19,16 +20,22 @@ pub fn spawn_world_model(
     // The world model camera will render the floor and the cubes spawned in this system.
     // Assigning no `RenderLayers` component defaults to layer 0.
 
-    commands.spawn((Mesh3d(floor), MeshMaterial3d(material.clone())));
+    commands.spawn((
+        Mesh3d(floor),
+        Collider::cuboid(100.0, 0.0, 100.0),
+        MeshMaterial3d(material.clone())
+    ));
 
     commands.spawn((
         Mesh3d(cube.clone()),
+        Collider::cuboid(1.0, 0.25, 0.5),
         MeshMaterial3d(material.clone()),
         Transform::from_xyz(0.0, 0.25, -3.0),
     ));
 
     commands.spawn((
         Mesh3d(cube),
+        Collider::cuboid(1.0, 0.25, 0.5),
         MeshMaterial3d(material.clone()),
         Transform::from_xyz(0.75, 1.75, 0.0),
     ));

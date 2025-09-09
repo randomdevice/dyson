@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 bevy =  { version = "0.16.0", features = [ "wayland" ] }
-rapier3d = { version = "*", features = [ "simd-stable" ] }
+bevy_rapier3d = { version = "*", features = [ "simd-stable", "debug-render-3d"] }
 
 [[bin]]
 name = "dyson"
