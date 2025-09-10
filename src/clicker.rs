@@ -15,7 +15,8 @@ pub fn log_mouse_clicks(
     let (yaw, pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
 
     if input.just_pressed(MouseButton::Left) {
-        let forward_distance = 2.0;
+        let forward_distance = 1.0;
+        let forward_velocity = 15.0;
         let radius = 0.3;
         let sphere = meshes.add(Sphere::new(radius));
         let material = materials.add(Color::WHITE);
@@ -24,17 +25,29 @@ pub fn log_mouse_clicks(
         let y_translation = transform.translation.y + pitch.sin() * pitch.cos() * forward_distance; 
         let z_translation = transform.translation.z - yaw.cos() * forward_distance;
         //info!("Object [ x: {}, y: {}, z: {} ]", x_translation, y_translation , z_translation);
+        
+        let x_velocity = - yaw.sin() * forward_velocity;
+        let y_velocity = pitch.sin() * pitch.cos() * forward_velocity;
+        let z_velocity = - yaw.cos() * forward_velocity;
+
+        let damping = Damping { linear_damping: 0.5, angular_damping: 0.5 };
 
         commands.spawn((
                 RigidBody::Dynamic,
                 Mesh3d(sphere.clone()),
                 MeshMaterial3d(material.clone()),
                 Collider::ball(radius),
-                Restitution::coefficient(0.7),
+                Restitution::coefficient(0.8),
+                Friction::coefficient(5.0),
+                damping,
                 Transform::from_xyz(
                     x_translation, 
                     y_translation, 
                     z_translation),
+                Velocity::linear(Vec3::new(
+                    x_velocity, 
+                    y_velocity, 
+                    z_velocity)),
         ));
     }
 

@@ -16,24 +16,31 @@ pub fn spawn_world_model(
     let floor = meshes.add(Plane3d::new(Vec3::Y, Vec2::splat(100.0)));
     let cube = meshes.add(Cuboid::new(2.0, 0.5, 1.0));
     let material = materials.add(Color::WHITE);
+    let friction = Friction { coefficient: 1.0, combine_rule: CoefficientCombineRule::Max };
 
     // The world model camera will render the floor and the cubes spawned in this system.
     // Assigning no `RenderLayers` component defaults to layer 0.
 
+    // floor (a y is needed for the collider for a surface to have friction on)
     commands.spawn((
+        RigidBody::Fixed,
         Mesh3d(floor),
-        Collider::cuboid(100.0, 0.0, 100.0),
-        MeshMaterial3d(material.clone())
+        Collider::cuboid(100.0, 0.001, 100.0),
+        MeshMaterial3d(material.clone()),
+        friction
     ));
 
     commands.spawn((
+        RigidBody::Fixed,
         Mesh3d(cube.clone()),
         Collider::cuboid(1.0, 0.25, 0.5),
         MeshMaterial3d(material.clone()),
         Transform::from_xyz(0.0, 0.25, -3.0),
     ));
 
+    // top cube
     commands.spawn((
+        RigidBody::Fixed,
         Mesh3d(cube),
         Collider::cuboid(1.0, 0.25, 0.5),
         MeshMaterial3d(material.clone()),
