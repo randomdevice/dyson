@@ -50,6 +50,7 @@ pub mod sensitivity;
 pub mod entity;
 pub mod render_layer;
 pub mod movement;
+pub mod crosshair;
 
 use world_model::spawn_world_model;
 use world_model::spawn_lights;
@@ -59,6 +60,7 @@ use view_model::spawn_view_model;
 use movement::move_player;
 use movement::translate_player;
 use clicker::log_mouse_clicks;
+use crosshair::spawn_crosshair;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -74,9 +76,16 @@ fn main() {
                 spawn_world_model,
                 spawn_lights,
                 spawn_text,
+                spawn_crosshair,
             ),
         )
-        .add_systems(Update, (move_player, translate_player, change_fov, log_mouse_clicks))
+        .add_systems(Update, 
+            (
+                move_player, 
+                translate_player, 
+                change_fov, 
+                log_mouse_clicks
+            ))
         .run();
 }
 
