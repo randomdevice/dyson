@@ -1,12 +1,9 @@
-use bevy::{
-    input::mouse::AccumulatedMouseMotion,
-    prelude::*
-};
+use bevy::{input::mouse::AccumulatedMouseMotion, prelude::*};
 
 use std::f32::consts::FRAC_PI_2;
 
-use crate::sensitivity::CameraSensitivity;
 use crate::entity::Player;
+use crate::sensitivity::CameraSensitivity;
 
 pub fn move_player(
     accumulated_mouse_motion: Res<AccumulatedMouseMotion>,
@@ -44,9 +41,8 @@ pub fn move_player(
 
 pub fn translate_player(
     input: Res<ButtonInput<KeyCode>>,
-    player: Single<(&mut Transform, &CameraSensitivity), With<Player>>, 
-    ) {
-    
+    player: Single<(&mut Transform, &CameraSensitivity), With<Player>>,
+) {
     let (mut transform, _) = player.into_inner();
 
     let (yaw, _, _) = transform.rotation.to_euler(EulerRot::YXZ);
@@ -70,5 +66,4 @@ pub fn translate_player(
         transform.translation.x = transform.translation.x + yaw.sin() * 0.3;
         transform.translation.z = transform.translation.z + yaw.cos() * 0.3;
     }
-        
-} 
+}
