@@ -57,6 +57,7 @@ use clicker::despawn_balls;
 use clicker::log_mouse_clicks;
 use crosshair::spawn_crosshair;
 use enemy::enemy_ai;
+use enemy::handle_collisions;
 use enemy::spawn_enemy;
 use movement::move_player;
 use movement::translate_player;
@@ -68,6 +69,8 @@ use world_model::spawn_world_model;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
+
+use crate::view_model::update_health_bar;
 
 fn main() {
     App::new()
@@ -93,6 +96,8 @@ fn main() {
                 despawn_balls,
                 log_mouse_clicks,
                 enemy_ai,
+                handle_collisions,
+                update_health_bar,
             ),
         )
         .run();

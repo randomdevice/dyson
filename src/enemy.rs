@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
 use crate::ball::{Ball, BallBundle};
-use crate::entity::Player;
+use crate::entity::{Health, Player, Projectile};
 
 #[derive(Component)]
 pub struct Enemy {
@@ -57,23 +57,26 @@ pub fn enemy_ai(
             let velocity = shoot_dir * 20.0; // Speed of the ball
 
             // Use the BallBundle from the previous step
-            commands.spawn(BallBundle {
-                ball: Ball {
-                    lifetime: Timer::from_seconds(5.0, TimerMode::Once),
+            commands.spawn((
+                BallBundle {
+                    ball: Ball {
+                        lifetime: Timer::from_seconds(5.0, TimerMode::Once),
+                    },
+                    rigid_body: RigidBody::Dynamic,
+                    mesh: Mesh3d(meshes.add(Sphere::new(0.3))),
+                    material: MeshMaterial3d(materials.add(Color::from(Srgba::RED))),
+                    collider: Collider::ball(0.3),
+                    restitution: Restitution::coefficient(0.8),
+                    friction: Friction::coefficient(5.0),
+                    damping: Damping {
+                        linear_damping: 0.5,
+                        angular_damping: 0.5,
+                    },
+                    transform: Transform::from_translation(spawn_pos),
+                    velocity: Velocity::linear(velocity),
                 },
-                rigid_body: RigidBody::Dynamic,
-                mesh: Mesh3d(meshes.add(Sphere::new(0.3))),
-                material: MeshMaterial3d(materials.add(Color::from(Srgba::RED))),
-                collider: Collider::ball(0.3),
-                restitution: Restitution::coefficient(0.8),
-                friction: Friction::coefficient(5.0),
-                damping: Damping {
-                    linear_damping: 0.5,
-                    angular_damping: 0.5,
-                },
-                transform: Transform::from_translation(spawn_pos),
-                velocity: Velocity::linear(velocity),
-            });
+                Projectile { damage: 1 },
+            ));
         }
     }
 }
@@ -93,4 +96,30 @@ pub fn spawn_enemy(
         material: MeshMaterial3d(materials.add(Color::from(Srgba::BLUE))),
         transform: Transform::from_xyz(5.0, 0.5, 5.0),
     });
+}
+
+pub fn handle_collisions(
+    mut collision_events: EventReader<CollisionEvent>,
+    projectile_query: Query<&Projectile>,
+    mut player_query: Query<&mut Health, With<Player>>,
+) {
+    for collision_event in collision_events.read() {
+        if let CollisionEvent::Started(entity_a, entity_b, _) = collision_event {
+            // 1. Try to see if A is projectile and B is player
+            // 2. Try to see if B is projectile and A is player
+            let hit_data = if let Ok(p) = projectile_query.get(*entity_a) {
+                player_query.get_mut(*entity_b).map(|h| (h, p)).ok()
+            } else if let Ok(p) = projectile_query.get(*entity_b) {
+                player_query.get_mut(*entity_a).map(|h| (h, p)).ok()
+            } else {
+                None
+            };
+
+            // If we found a valid Player + Projectile pair, apply damage
+            if let Some((mut health, projectile)) = hit_data {
+                health.current -= projectile.damage;
+                info!("Player hit! Health remaining: {}", health.current);
+            }
+        }
+    }
 }
