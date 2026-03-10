@@ -29,7 +29,7 @@ pub fn spawn_view_model(
                 current: 10,
                 max: 10,
             },
-            RigidBody::Dynamic,
+            RigidBody::KinematicVelocityBased,
             Collider::cuboid(0.5, 1.0, 0.5),
             ActiveEvents::COLLISION_EVENTS,
             Transform::from_xyz(0.0, 1.0, 0.0),

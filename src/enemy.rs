@@ -89,7 +89,7 @@ pub fn spawn_enemy(
     commands.spawn(EnemyBundle {
         enemy: Enemy {
             move_timer: Timer::from_seconds(2.0, TimerMode::Repeating),
-            shoot_timer: Timer::from_seconds(1.5, TimerMode::Repeating),
+            shoot_timer: Timer::from_seconds(0.3, TimerMode::Repeating),
             current_direction: Vec3::ZERO,
         },
         mesh: Mesh3d(meshes.add(Cuboid::from_size(Vec3::ONE))),
