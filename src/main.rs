@@ -4,6 +4,7 @@ pub mod crosshair;
 pub mod enemy;
 pub mod entity;
 pub mod movement;
+pub mod procedural_world;
 pub mod render_layer;
 pub mod sensitivity;
 pub mod view_model;
@@ -18,10 +19,11 @@ use enemy::spawn_enemy;
 use movement::move_player;
 use movement::translate_player;
 use view_model::spawn_view_model;
+// IMPORT NEW INFINITE WORLD ENGINE PARTS
+use procedural_world::{SpawnedChunks, manage_infinite_world};
 use world_model::change_fov;
 use world_model::spawn_lights;
 use world_model::spawn_text;
-use world_model::spawn_world_model;
 
 use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
@@ -32,11 +34,11 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
+        .init_resource::<SpawnedChunks>()
         .add_systems(
             Startup,
             (
                 spawn_view_model,
-                spawn_world_model,
                 spawn_lights,
                 spawn_text,
                 spawn_crosshair,
@@ -54,6 +56,7 @@ fn main() {
                 enemy_ai,
                 handle_collisions,
                 update_health_bar,
+                manage_infinite_world,
             ),
         )
         .run();
